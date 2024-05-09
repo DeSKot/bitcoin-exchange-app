@@ -38,7 +38,7 @@ class BitcoinExchangeRateRepository extends ServiceEntityRepository implements B
             ->setParameter('toDate', $bitcoinRequestDTO->getToDate())
             ->where('b.currency_id = :currencyId')
             ->andWhere('b.createdAt >= :fromDate')
-            ->andWhere('b.createdAt >= :toDate')
+            ->andWhere('b.createdAt <= :toDate')
             ->setMaxResults($bitcoinRequestDTO->getCountOfRows())
             ->getQuery()
             ->getResult();
