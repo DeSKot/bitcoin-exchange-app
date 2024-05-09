@@ -1,6 +1,15 @@
-controllers:
-    resource: ../src/Controller/
-    type: annotation
+display_exchange_value:
+    path:       /api/exchange/{currency}/{fromDate}/{toDate}/{rows}
+    controller: App\Controller\ExchangeController::index
+    methods:    GET|HEAD
+    defaults:
+        rows: 24
+
+# config/routes.yaml
+app.swagger_ui:
+    path: /api/doc
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
 
 kernel:
     resource: ../src/Kernel.php

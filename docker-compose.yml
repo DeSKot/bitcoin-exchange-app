@@ -1,0 +1,49 @@
+version: "3.7"
+services:
+  bitcoin-exchange-app:
+    build:
+      args:
+        user: sammy
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: bitcoin-exchange-app
+    container_name: bitcoin-exchange-app
+    restart: unless-stopped
+    working_dir: /var/www/bitcoin-exchange-app
+    volumes:
+      - ./:/var/www/bitcoin-exchange-app
+    networks:
+      - bitcoin-exchange-network
+  nginx-bitcoin-exchange:
+    image: nginx:1.18.0-alpine
+    container_name: bitcoin-exchange-nginx
+    restart: unless-stopped
+    ports:
+      - "8020:80"
+    volumes:
+      - ./public:/var/www/bitcoin-exchange-app/public
+      - ./docker/nginx/vhost.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - bitcoin-exchange-network
+  db-bitcoin-exchange:
+    image: postgres:16.0-bullseye
+    container_name: bitcoin-exchange-db
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=tech.user
+      - POSTGRES_PASSWORD=tech.user
+      - POSTGRES_DB=exchange_db
+    volumes:
+      - db-bitcoin-exchange-data:/var/lib/postgresql/data
+    ports:
+      - 5432
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
+    networks:
+      - bitcoin-exchange-network
+networks:
+    bitcoin-exchange-network:
+        external: true
+volumes:
+    db-bitcoin-exchange-data:
